@@ -1,42 +1,42 @@
-name Build APK
+name: Build APK
 
-on
-  push
-    branches [main, master]
-  workflow_dispatch
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
 
-jobs
-  build
-    runs-on ubuntu-latest
-    steps
-      - uses actionscheckout@v4
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-      - uses actionssetup-node@v4
-        with
-          node-version 20
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      - uses actionssetup-java@v4
-        with
-          distribution temurin
-          java-version 17
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
-      - name Install dependencies
-        run npm install
+      - name: Install dependencies
+        run: npm install
 
-      - name Add Android platform
-        run npx cap add android
+      - name: Add Android platform
+        run: npx cap add android
 
-      - name Sync web files
-        run npx cap sync android
+      - name: Sync web files
+        run: npx cap sync android
 
-      - name Build debug APK
-        working-directory android
-        run 
+      - name: Build debug APK
+        working-directory: android
+        run: |
           chmod +x gradlew
-          .gradlew assembleDebug
+          ./gradlew assembleDebug
 
-      - name Upload APK
-        uses actionsupload-artifact@v4
-        with
-          name CenturyScore-APK
-          path androidappbuildoutputsapkdebugapp-debug.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: CenturyScore-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
